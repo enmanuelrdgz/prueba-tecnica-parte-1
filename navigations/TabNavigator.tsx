@@ -5,6 +5,9 @@ import Home from "../screens/HomeScreen";
 import Cart from "../screens/CartScreen";
 import Product from "../screens/ProductScreen";
 import Profile from "../screens/ProfileScreen";
+import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 const HomeStack = createNativeStackNavigator();
 
@@ -40,7 +43,7 @@ const ProfileStack = createNativeStackNavigator();
 
 const ProfileStackScreen = () => {
     return (
-        <ProfileStack.Navigator>
+        <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
             <ProfileStack.Screen
                 name="Profile"
                 component={Profile}
@@ -52,6 +55,8 @@ const ProfileStackScreen = () => {
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+
+    const insets = useSafeAreaInsets();
 
     return (
         <Tab.Navigator  screenOptions={({ route }) => ({
