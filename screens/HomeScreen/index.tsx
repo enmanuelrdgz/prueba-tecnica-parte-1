@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,8 @@ import {
   StyleSheet,
   Dimensions,
   SafeAreaView,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import ProductCard from '../../components/ProductCard';
 
@@ -63,13 +65,16 @@ const HomeScreen = ({ navigation }: any) => {
     const availableWidth = width - (margin * 2);
     return Math.floor(availableWidth / (cardWidth + 10));
   };
-
   const columns = getColumns();
 
   const handleProductPress = (product: any) => {
-    // Navigate to Product screen passing the product data
     navigation.navigate('Product', { product });
   };
+
+  // Mostrar loading mientras se cargan los productos
+  if (loading) {
+    return <LoadingContent />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,7 +91,7 @@ const HomeScreen = ({ navigation }: any) => {
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.grid, { flexDirection: 'row', flexWrap: 'wrap' }]}>
-          {SAMPLE_PRODUCTS.map((product) => (
+          {products.map((product: any) => (
             <View 
               key={product.id} 
               style={[
@@ -141,6 +146,20 @@ const styles = StyleSheet.create({
   gridItem: {
     paddingHorizontal: 5,
     marginBottom: 10,
+  },
+  // Estilos para el loading
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa', // Mismo fondo que el container principal
+    paddingHorizontal: 20,
+  },
+  loadingText: {
+    marginTop: 15,
+    fontSize: 16,
+    color: '#6c757d', // Mismo color que el subtitle
+    textAlign: 'center',
   },
 });
 
