@@ -10,7 +10,7 @@ const HomeStack = createNativeStackNavigator();
 
 const HomeStackScreen = () => {
     return (
-        <HomeStack.Navigator>
+        <HomeStack.Navigator screenOptions={{ headerShown: false }}>
             <HomeStack.Screen
                 name="Home"
                 component={Home}
@@ -27,7 +27,7 @@ const CartStack = createNativeStackNavigator();
 
 const CartStackScreen = () => {
     return (
-        <CartStack.Navigator>
+        <CartStack.Navigator screenOptions={{ headerShown: false }}>
             <CartStack.Screen
                 name="Cart"
                 component={Cart}
