@@ -11,58 +11,6 @@ import ProductCard from '../../components/ProductCard';
 
 const { width } = Dimensions.get('window');
 
-// Sample product data - in a real app, this would come from an API or database
-const SAMPLE_PRODUCTS = [
-  {
-    id: 1,
-    name: 'Smartphone Pro',
-    price: 299,
-    image: 'https://via.placeholder.com/150/4285F4/FFFFFF?text=Phone',
-    category: 'Electronics',
-    description: 'Latest smartphone with advanced features and excellent camera quality.',
-  },
-  {
-    id: 2,
-    name: 'Wireless Headphones',
-    price: 89,
-    image: 'https://via.placeholder.com/150/34A853/FFFFFF?text=Audio',
-    category: 'Electronics',
-    description: 'Premium wireless headphones with noise cancellation technology.',
-  },
-  {
-    id: 3,
-    name: 'Gaming Laptop',
-    price: 899,
-    image: 'https://via.placeholder.com/150/EA4335/FFFFFF?text=Laptop',
-    category: 'Electronics',
-    description: 'High-performance gaming laptop with dedicated graphics card.',
-  },
-  {
-    id: 4,
-    name: 'Smart Watch',
-    price: 199,
-    image: 'https://via.placeholder.com/150/FBBC04/FFFFFF?text=Watch',
-    category: 'Wearables',
-    description: 'Feature-rich smartwatch with health monitoring capabilities.',
-  },
-  {
-    id: 5,
-    name: 'Bluetooth Speaker',
-    price: 45,
-    image: 'https://via.placeholder.com/150/9C27B0/FFFFFF?text=Speaker',
-    category: 'Electronics',
-    description: 'Portable Bluetooth speaker with excellent sound quality.',
-  },
-  {
-    id: 6,
-    name: 'Tablet Pro',
-    price: 399,
-    image: 'https://via.placeholder.com/150/FF9800/FFFFFF?text=Tablet',
-    category: 'Electronics',
-    description: 'Professional tablet perfect for work and entertainment.',
-  },
-];
-
 const HomeScreen = ({ navigation }: any) => {
   // Calculate how many columns can fit based on screen width
   // Each card needs minimum 160px + margins, so we calculate dynamically
