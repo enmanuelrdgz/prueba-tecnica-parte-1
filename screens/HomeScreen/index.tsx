@@ -12,8 +12,51 @@ import ProductCard from '../../components/ProductCard';
 const { width } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }: any) => {
-  // Calculate how many columns can fit based on screen width
-  // Each card needs minimum 160px + margins, so we calculate dynamically
+  
+  // No hay manejo de errores en el caso de que haya
+  // un problema de red o con el servicio remoto
+
+  // Tampoco hay paginacion de la respuesta
+
+  const [products, setProducts] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+
+  // obtener los productos de la API
+  const fetchProducts = async () => {
+    setLoading(true);
+    
+    try {
+      const response = await fetch('https://fakestoreapi.com/products');      
+      const data = await response.json();
+      setProducts(data);
+    } catch (err) {
+      Alert.alert('Error', 'No se pudieron cargar los productos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Cargar productos al montar el componente
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  // componente de loading
+  const LoadingContent = () => (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Products</Text>
+        <Text style={styles.headerSubtitle}>
+          Discover our amazing collection
+        </Text>
+      </View>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    </SafeAreaView>
+  );
+
+  // Calcular el numero de columnas basado en el ancho de la pantalla
   const getColumns = () => {
     const cardWidth = 160;
     const margin = 20;
