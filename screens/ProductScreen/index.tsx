@@ -91,7 +91,7 @@ const ProductScreen = ({ route, navigation }: any) => {
         <View style={styles.infoSection}>
           {/* Product Name and Price */}
           <View style={styles.titlePriceContainer}>
-            <Text style={styles.productName}>{product.name}</Text>
+            <Text style={styles.productName}>{product.title}</Text>
             <Text style={styles.productPrice}>{formatPrice(product.price)}</Text>
           </View>
 
