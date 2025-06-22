@@ -32,7 +32,7 @@ const ProductScreen = ({ route, navigation }: any) => {
     // This would typically dispatch an action to add the item to cart
     Alert.alert(
       'Added to Cart',
-      `${quantity} ${product.name}(s) added to your cart!`,
+      `${quantity} ${product.title} added to your cart!`,
       [{ text: 'OK' }]
     );
   };
