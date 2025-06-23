@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -71,23 +71,7 @@ const GreenCartScreen = ({ navigation }: any) => {
 
   // Handle removing an item from the cart
   const handleRemoveItem = (itemId: any) => {
-    Alert.alert(
-      'Eliminar Producto',
-      '¿Estás seguro de que quieres eliminar este producto del carrito?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: () => {
-            setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
-          },
-        },
-      ]
-    );
+    setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
   };
 
   // Handle updating item quantity
@@ -231,7 +215,7 @@ const GreenCartScreen = ({ navigation }: any) => {
                     <CartProductCard
                       key={item.id}
                       product={item}
-                      onPress={() => handleProductPress(item)}
+                      onPress={() => {}}
                       onRemove={() => handleRemoveItem(item.id)}
                       onUpdateQuantity={(newQuantity: any) => handleUpdateQuantity(item.id, newQuantity)}
                     />
