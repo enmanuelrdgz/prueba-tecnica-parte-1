@@ -22,33 +22,8 @@ const HomeScreen = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Animaciones
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-  const headerScaleAnim = useRef(new Animated.Value(0.95)).current;
-
   useEffect(() => {
     fetchProducts();
-    
-    // Animación inicial
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.spring(headerScaleAnim, {
-        toValue: 1,
-        tension: 50,
-        friction: 7,
-        useNativeDriver: true,
-      }),
-    ]).start();
   }, []);
 
   // Obtener los productos de la API
@@ -117,20 +92,8 @@ const HomeScreen = ({ navigation }: any) => {
   return (
       <SafeAreaView style={styles.container}>
         {/* Header */}
-        <Animated.View
-          style={[
-            styles.header,
-            {
-              opacity: fadeAnim,
-              transform: [
-                { scale: headerScaleAnim },
-                { translateY: slideAnim },
-              ],
-            },
-          ]}
-        >
-          <LinearGradient
-            colors={['#ffffff', '#fafbff']}
+
+          <View
             style={styles.headerGradient}
           >
             <View style={styles.headerContent}>
@@ -149,19 +112,9 @@ const HomeScreen = ({ navigation }: any) => {
                 </LinearGradient>
               </View>
             </View>
-          </LinearGradient>
-        </Animated.View>
+          </View>
         
         {/* Products Grid */}
-        <Animated.View
-          style={[
-            styles.contentContainer,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
-        >
           <ScrollView 
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
@@ -180,21 +133,12 @@ const HomeScreen = ({ navigation }: any) => {
             {products.length > 0 ? (
               <View style={[styles.grid, { flexDirection: 'row', flexWrap: 'wrap' }]}>
                 {products.map((product: any, index: number) => (
-                  <Animated.View 
+                  <View 
                     key={product.id} 
                     style={[
                       styles.gridItem,
                       { 
                         width: `${100 / columns}%`,
-                        opacity: fadeAnim,
-                        transform: [
-                          {
-                            translateY: fadeAnim.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [50, 0],
-                            }),
-                          },
-                        ],
                       }
                     ]}
                   >
@@ -202,27 +146,20 @@ const HomeScreen = ({ navigation }: any) => {
                       product={product}
                       onPress={() => handleProductPress(product)}
                     />
-                  </Animated.View>
+                  </View>
                 ))}
               </View>
             ) : (
               <View style={styles.emptyContainer}>
-                <LinearGradient
-                  colors={['#ffffff', '#fefbff']}
-                  style={styles.emptyContent}
-                >
                   <Ionicons name="cube-outline" size={64} color="#9ca3af" />
                   <Text style={styles.emptyTitle}>No hay productos</Text>
                   <Text style={styles.emptySubtitle}>
                     No se encontraron productos disponibles en este momento
                   </Text>
-                </LinearGradient>
               </View>
             )}
           </ScrollView>
-        </Animated.View>
       </SafeAreaView>
-    </LinearGradient>
   );
 };
 
