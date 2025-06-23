@@ -93,7 +93,7 @@ const HomeScreen = ({ navigation }: any) => {
       <View style={styles.headerGradient}>
         <View style={styles.headerContent}>
           <View style={styles.headerTextContainer}>
-            <Text style={styles.headerTitle}>Products</Text>
+            <Text style={styles.headerTitle}>Productos</Text>
             <Text style={styles.headerSubtitle}>
               Discover our amazing collection
             </Text>
