@@ -8,32 +8,16 @@ import {
   Alert,
   Image,
   ScrollView,
-  Dimensions,
-  Animated,
+
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 
-const { width } = Dimensions.get('window');
-
 const GreenProfileScreen = ({ navigation }: any) => {
   const { logout } = useAuth();
 
-  // Animaciones
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-  const headerScaleAnim = useRef(new Animated.Value(0.95)).current;
-  const statsAnimations = useRef([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]).current;
-  const menuAnimations = useRef(
-    Array.from({ length: 6 }, () => new Animated.Value(0))
-  ).current;
-
-  // In a real app, this would come from user authentication context
+  //Mock user data
   const [user] = useState({
     nickname: 'JohnDoe123',
     email: 'john.doe@email.com',
@@ -41,50 +25,6 @@ const GreenProfileScreen = ({ navigation }: any) => {
     avatar: 'https://via.placeholder.com/120/16a34a/FFFFFF?text=JD',
   });
 
-  useEffect(() => {
-    // Animación inicial
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.spring(headerScaleAnim, {
-        toValue: 1,
-        tension: 50,
-        friction: 7,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    // Animaciones escalonadas para stats
-    const statsDelays = [200, 300, 400];
-    statsAnimations.forEach((anim, index) => {
-      Animated.timing(anim, {
-        toValue: 1,
-        duration: 600,
-        delay: statsDelays[index],
-        useNativeDriver: true,
-      }).start();
-    });
-
-    // Animaciones escalonadas para menu items
-    menuAnimations.forEach((anim, index) => {
-      Animated.timing(anim, {
-        toValue: 1,
-        duration: 500,
-        delay: 500 + index * 100,
-        useNativeDriver: true,
-      }).start();
-    });
-  }, []);
-
-  // Handle logout functionality
   const handleLogout = () => {
     Alert.alert(
       'Cerrar Sesión',
@@ -157,23 +97,9 @@ const GreenProfileScreen = ({ navigation }: any) => {
     },
   ];
 
-  // Render individual menu item with animations
   const renderMenuItem = (item: any, index: number) => (
-    <Animated.View
+    <View
       key={item.id}
-      style={[
-        {
-          opacity: menuAnimations[index],
-          transform: [
-            {
-              translateY: menuAnimations[index].interpolate({
-                inputRange: [0, 1],
-                outputRange: [20, 0],
-              }),
-            },
-          ],
-        },
-      ]}
     >
       <TouchableOpacity
         style={styles.menuItem}
@@ -194,48 +120,15 @@ const GreenProfileScreen = ({ navigation }: any) => {
         </View>
         <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
       </TouchableOpacity>
-    </Animated.View>
+    </View>
   );
-
-  const StatItem = ({ number, label, animationValue }: any) => (
-    <Animated.View
-      style={[
-        styles.statItem,
-        {
-          opacity: animationValue,
-          transform: [
-            {
-              scale: animationValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.8, 1],
-              }),
-            },
-          ],
-        },
-      ]}
-    >
-      <Text style={styles.statNumber}>{number}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </Animated.View>
-  );
-
+  
   return (
-    <LinearGradient
-      colors={['#f0fdf4', '#dcfce7', '#bbf7d0']}
-      style={styles.container}
-    >
       <SafeAreaView style={styles.container}>
         {/* Header */}
-        <Animated.View
+        <View
           style={[
             styles.header,
-            {
-              opacity: fadeAnim,
-              transform: [
-                { scale: headerScaleAnim },
-                { translateY: slideAnim },
-              ],
-            },
           ]}
         >
           <LinearGradient
@@ -254,20 +147,17 @@ const GreenProfileScreen = ({ navigation }: any) => {
               </View>
             </View>
           </LinearGradient>
-        </Animated.View>
+        </View>
 
         <ScrollView 
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
           {/* User Info Section */}
-          <Animated.View
+          <View
             style={[
               styles.userSection,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }],
-              },
+             
             ]}
           >
             <LinearGradient
@@ -301,20 +191,6 @@ const GreenProfileScreen = ({ navigation }: any) => {
                 </Text>
               </View>
             </LinearGradient>
-          </Animated.View>
-
-          {/* Stats Section */}
-          <View style={styles.statsSection}>
-            <LinearGradient
-              colors={['#ffffff', '#fefbff']}
-              style={styles.statsSectionGradient}
-            >
-              <StatItem number="24" label="Pedidos" animationValue={statsAnimations[0]} />
-              <View style={styles.statDivider} />
-              <StatItem number="$1,247" label="Total Gastado" animationValue={statsAnimations[1]} />
-              <View style={styles.statDivider} />
-              <StatItem number="4.8★" label="Calificación" animationValue={statsAnimations[2]} />
-            </LinearGradient>
           </View>
 
           {/* Menu Items Section */}
@@ -344,16 +220,9 @@ const GreenProfileScreen = ({ navigation }: any) => {
             </TouchableOpacity>
           </View>
 
-          {/* App Info Section */}
-          <View style={styles.appInfoSection}>
-            <Text style={styles.appVersion}>Versión 1.0.0</Text>
-            <Text style={styles.appInfo}>
-              Desarrollado con ❤️ para una mejor experiencia de compra
-            </Text>
-          </View>
+         
         </ScrollView>
       </SafeAreaView>
-    </LinearGradient>
   );
 };
 
@@ -371,8 +240,12 @@ const styles = StyleSheet.create({
   headerGradient: {
     paddingHorizontal: 20,
     paddingVertical: 20,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   headerContent: {
     flexDirection: 'row',
