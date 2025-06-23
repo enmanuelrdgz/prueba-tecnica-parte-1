@@ -160,7 +160,6 @@ const GreenCartScreen = ({ navigation }: any) => {
         </Text>
         <TouchableOpacity
           style={styles.shopNowButton}
-          onPress={() => navigation.navigate('Home')}
           activeOpacity={0.8}
         >
           <LinearGradient
