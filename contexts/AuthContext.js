@@ -47,7 +47,6 @@ export const AuthProvider = ({ children }) => {
 
   // Función para hacer logout
   const logout = async () => {
-    dispatch({ type: 'LOGOUT' });
     setState({...state, isAuthenticated: false, token: null})
   };
 
