@@ -115,10 +115,6 @@ const HomeScreen = ({ navigation }: any) => {
   }
 
   return (
-    <LinearGradient
-      colors={['#f0fdf4', '#dcfce7', '#bbf7d0']}
-      style={styles.container}
-    >
       <SafeAreaView style={styles.container}>
         {/* Header */}
         <Animated.View
@@ -151,24 +147,6 @@ const HomeScreen = ({ navigation }: any) => {
                 >
                   <Ionicons name="storefront" size={24} color="#16a34a" />
                 </LinearGradient>
-              </View>
-            </View>
-            
-            {/* Stats Bar */}
-            <View style={styles.statsContainer}>
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{products.length}</Text>
-                <Text style={styles.statLabel}>Productos</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>4.8★</Text>
-                <Text style={styles.statLabel}>Rating</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>24/7</Text>
-                <Text style={styles.statLabel}>Soporte</Text>
               </View>
             </View>
           </LinearGradient>
