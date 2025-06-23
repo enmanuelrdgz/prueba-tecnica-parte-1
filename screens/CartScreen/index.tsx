@@ -183,7 +183,7 @@ const GreenCartScreen = ({ navigation }: any) => {
           >
             <View style={styles.headerContent}>
               <View style={styles.headerTextContainer}>
-                <Text style={styles.headerTitle}>Carrito de Compras</Text>
+                <Text style={styles.headerTitle}>Tu Carrito</Text>
                 {cartItems.length > 0 && (
                   <Text style={styles.headerSubtitle}>
                     {getTotalItems()} {getTotalItems() === 1 ? 'producto' : 'productos'}
