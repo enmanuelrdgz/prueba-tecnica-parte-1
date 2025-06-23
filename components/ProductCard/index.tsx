@@ -34,7 +34,7 @@ const ProductCard = ({ product, onPress }: any) => {
       {/* Product Information Container */}
       <View style={styles.infoContainer}>
         <Text style={styles.productName} numberOfLines={2}>
-          {product.name}
+          {product.title}
         </Text>
         <Text style={styles.productPrice}>
           {formatPrice(product.price)}
