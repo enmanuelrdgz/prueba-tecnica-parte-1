@@ -10,27 +10,43 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LoginScreen = ({ navigation }: any) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   const {login} = useAuth()
-  const handleLogin = () => {
+
+  const handleLogin = async () => {
+    setErrorMessage('');
     if (!username.trim() || !password.trim()) {
-      Alert.alert('Error', 'Por favor completa todos los campos');
+      setErrorMessage('Por favor, completa todos los campos');
       return;
     }
-    if(login(username, password)) {
-      Alert.alert('Error', 'datos incorrectos');
-    }
     
+    setIsLoading(true);
+
+    let success = await login(username, password)
+    if(success) {
+     
+    } else {
+      setErrorMessage('Usuario o contraseña incorrectos');
+      setIsLoading(false);
+    }
     
   };
 
   const handleGoToRegister = () => {
+    setErrorMessage('');
     navigation.navigate('Register');
   };
+
+  const {top} = useSafeAreaInsets()
 
   return (
     <KeyboardAvoidingView 
@@ -42,7 +58,7 @@ const LoginScreen = ({ navigation }: any) => {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.header}>
+        <View style={{...styles.header, paddingVertical: top + 16}}>
           <Text style={styles.headerTitle}>Iniciar Sesión</Text>
           <Text style={styles.headerSubtitle}>Ingresa tus credenciales para continuar</Text>
         </View>
@@ -54,7 +70,10 @@ const LoginScreen = ({ navigation }: any) => {
             placeholder="Ingresa tu usuario"
             placeholderTextColor="#6c757d"
             value={username}
-            onChangeText={setUsername}
+            onChangeText={(text) => {
+              setUsername(text);
+              if (errorMessage) setErrorMessage('');
+            }}
             autoCapitalize="none"
             autoCorrect={false}
           />
@@ -65,14 +84,32 @@ const LoginScreen = ({ navigation }: any) => {
             placeholder="Ingresa tu contraseña"
             placeholderTextColor="#6c757d"
             value={password}
-            onChangeText={setPassword}
+            onChangeText={text => {
+              setPassword(text);
+              if (errorMessage) setErrorMessage('');
+            }}
             secureTextEntry
             autoCapitalize="none"
             autoCorrect={false}
           />
 
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+           {/* Mensaje de error */}
+          {errorMessage ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+          ) : null}
+
+          <TouchableOpacity 
+            style={[styles.loginButton, isLoading && styles.loginButtonDisabled]} 
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" size="small" />
+            ) : (
+              <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.registerButton} onPress={handleGoToRegister}>
@@ -91,7 +128,6 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingVertical: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e9ecef',
@@ -123,7 +159,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#212529',
     marginBottom: 8,
     marginTop: 20,
@@ -164,6 +200,24 @@ const styles = StyleSheet.create({
     color: '#6c757d',
     fontSize: 16,
     textDecorationLine: 'underline',
+  },
+    errorContainer: {
+    backgroundColor: '#f8d7da',
+    borderWidth: 1,
+    borderColor: '#f5c6cb',
+    borderRadius: 6,
+    padding: 12,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  errorText: {
+    color: '#721c24',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  loginButtonDisabled: {
+    backgroundColor: '#007ff0',
   },
 });
 
