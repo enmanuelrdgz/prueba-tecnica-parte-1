@@ -22,7 +22,7 @@ const GreenProfileScreen = ({ navigation }: any) => {
     nickname: 'JohnDoe123',
     email: 'john.doe@email.com',
     memberSince: '2023',
-    avatar: 'https://via.placeholder.com/120/16a34a/FFFFFF?text=JD',
+    avatar: 'https://i.pravatar.cc/250?u=usuario@example.com',
   });
 
   const handleLogout = () => {
