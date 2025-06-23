@@ -11,10 +11,14 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '@/contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 
 const ProfileScreen = ({ navigation }: any) => {
+
+  const {logout} = useAuth()
+
   // In a real app, this would come from user authentication context
   const [user] = useState({
     nickname: 'JohnDoe123',
@@ -37,21 +41,7 @@ const ProfileScreen = ({ navigation }: any) => {
           text: 'Sign Out',
           style: 'destructive',
           onPress: () => {
-            // In a real app, this would clear authentication tokens
-            // and navigate to login screen
-            Alert.alert(
-              'Signed Out',
-              'You have been successfully signed out.',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => {
-                    // Navigate to authentication screen
-                    // navigation.navigate('Auth');
-                  },
-                },
-              ]
-            );
+            logout()
           },
         },
       ]
@@ -194,14 +184,6 @@ const ProfileScreen = ({ navigation }: any) => {
             <Ionicons name="log-out-outline" size={20} color="#dc3545" />
             <Text style={styles.logoutText}>Sign Out</Text>
           </TouchableOpacity>
-        </View>
-
-        {/* App Info Section */}
-        <View style={styles.appInfoSection}>
-          <Text style={styles.appVersion}>App Version 1.0.0</Text>
-          <Text style={styles.appInfo}>
-            © 2024 Your App Name. All rights reserved.
-          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
