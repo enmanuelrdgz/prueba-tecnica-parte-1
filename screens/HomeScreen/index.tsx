@@ -86,49 +86,14 @@ const HomeScreen = ({ navigation }: any) => {
     setRefreshing(false);
   };
 
-  // Componente de loading con estilo verde
+  // Componente de loading
   const LoadingContent = () => (
-    <LinearGradient
-      colors={['#f0fdf4', '#dcfce7', '#bbf7d0']}
-      style={styles.container}
-    >
+
       <SafeAreaView style={styles.container}>
-        <Animated.View
-          style={[
-            styles.header,
-            {
-              opacity: fadeAnim,
-              transform: [{ scale: headerScaleAnim }],
-            },
-          ]}
-        >
-          <LinearGradient
-            colors={['#ffffff', '#fafbff']}
-            style={styles.headerGradient}
-          >
-            <Text style={styles.headerTitle}>Products</Text>
-            <Text style={styles.headerSubtitle}>
-              Discover our amazing collection
-            </Text>
-          </LinearGradient>
-        </Animated.View>
-        
         <View style={styles.loadingContainer}>
-          <View style={styles.loadingContent}>
-            <LinearGradient
-              colors={['#16a34a', '#22c55e']}
-              style={styles.loadingSpinnerContainer}
-            >
-              <ActivityIndicator size="large" color="#ffffff" />
-            </LinearGradient>
-            <Text style={styles.loadingText}>Cargando productos...</Text>
-            <Text style={styles.loadingSubtext}>
-              Estamos preparando los mejores productos para ti
-            </Text>
+              <ActivityIndicator size="large" color="#16a34a" />
           </View>
-        </View>
       </SafeAreaView>
-    </LinearGradient>
   );
 
   // Calcular el número de columnas basado en el ancho de la pantalla
