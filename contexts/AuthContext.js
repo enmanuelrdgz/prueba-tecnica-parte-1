@@ -24,7 +24,6 @@ export const AuthProvider = ({ children }) => {
   // Función para hacer el login
   const login = async (username, password) => {
     try {
-      setState({...state, isLoading: true})
       const response = await fetch("https://fakestoreapi.com/auth/login", {
         method: 'POST',
         headers: {
@@ -35,10 +34,9 @@ export const AuthProvider = ({ children }) => {
       if(response.ok) {
         const responseBody = await response.json()
         const token = responseBody.token
-        setState({isAuthenticated: true, token: token, isLoading: false})
+        setState({isAuthenticated: true, token: token})
         return true;
       } else {
-        setState({...state, isLoading: false})
         return false
       }
       
