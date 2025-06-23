@@ -17,13 +17,13 @@ import CartProductCard from '../../components/CartProductCart.tsx';
 
 const { width } = Dimensions.get('window');
 
-// Sample cart data - in a real app, this would come from context or state management
+// Mock data
 const SAMPLE_CART_ITEMS = [
   {
     id: 1,
     name: 'Smartphone Pro',
     price: 299,
-    image: 'https://via.placeholder.com/150/16a34a/FFFFFF?text=Phone',
+    image: 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
     category: 'Electronics',
     description: 'Latest smartphone with advanced features and excellent camera quality.',
     quantity: 2,
@@ -32,7 +32,7 @@ const SAMPLE_CART_ITEMS = [
     id: 2,
     name: 'Wireless Headphones',
     price: 89,
-    image: 'https://via.placeholder.com/150/22c55e/FFFFFF?text=Audio',
+    image: 'https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg',
     category: 'Electronics',
     description: 'Premium wireless headphones with noise cancellation technology.',
     quantity: 1,
@@ -41,7 +41,7 @@ const SAMPLE_CART_ITEMS = [
     id: 4,
     name: 'Smart Watch',
     price: 199,
-    image: 'https://via.placeholder.com/150/15803d/FFFFFF?text=Watch',
+    image: 'https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg',
     category: 'Wearables',
     description: 'Feature-rich smartwatch with health monitoring capabilities.',
     quantity: 1,
@@ -52,40 +52,6 @@ const GreenCartScreen = ({ navigation }: any) => {
   const [cartItems, setCartItems] = useState(SAMPLE_CART_ITEMS);
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
 
-  // Animaciones
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-  const headerScaleAnim = useRef(new Animated.Value(0.95)).current;
-  const footerSlideAnim = useRef(new Animated.Value(100)).current;
-  const buttonScaleAnim = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    // Animación inicial
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.spring(headerScaleAnim, {
-        toValue: 1,
-        tension: 50,
-        friction: 7,
-        useNativeDriver: true,
-      }),
-      Animated.timing(footerSlideAnim, {
-        toValue: 0,
-        duration: 800,
-        delay: 200,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
 
   // Calculate total price of all items in cart
   const calculateTotal = () => {
@@ -144,21 +110,6 @@ const GreenCartScreen = ({ navigation }: any) => {
     navigation.navigate('Product', { product });
   };
 
-  // Button press animation
-  const buttonPressAnimation = () => {
-    Animated.sequence([
-      Animated.timing(buttonScaleAnim, {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(buttonScaleAnim, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
 
   // Handle checkout process
   const handleCheckout = () => {
@@ -168,7 +119,6 @@ const GreenCartScreen = ({ navigation }: any) => {
     }
 
     setIsProcessingCheckout(true);
-    buttonPressAnimation();
     
     setTimeout(() => {
       setIsProcessingCheckout(false);
@@ -192,10 +142,6 @@ const GreenCartScreen = ({ navigation }: any) => {
     <Animated.View
       style={[
         styles.emptyCartContainer,
-        {
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
-        },
       ]}
     >
       <LinearGradient
@@ -232,26 +178,10 @@ const GreenCartScreen = ({ navigation }: any) => {
   );
 
   return (
-    <LinearGradient
-      colors={['#f0fdf4', '#dcfce7', '#bbf7d0']}
-      style={styles.container}
-    >
       <SafeAreaView style={styles.container}>
         {/* Header Section */}
-        <Animated.View
-          style={[
-            styles.header,
-            {
-              opacity: fadeAnim,
-              transform: [
-                { scale: headerScaleAnim },
-                { translateY: slideAnim },
-              ],
-            },
-          ]}
-        >
-          <LinearGradient
-            colors={['#ffffff', '#fafbff']}
+        
+          <View
             style={styles.headerGradient}
           >
             <View style={styles.headerContent}>
@@ -282,8 +212,7 @@ const GreenCartScreen = ({ navigation }: any) => {
                 </LinearGradient>
               </View>
             </View>
-          </LinearGradient>
-        </Animated.View>
+          </View>
 
         {/* Main Content */}
         {cartItems.length === 0 ? (
@@ -291,13 +220,9 @@ const GreenCartScreen = ({ navigation }: any) => {
         ) : (
           <>
             {/* Cart Items List */}
-            <Animated.View
+            <View
               style={[
-                styles.contentContainer,
-                {
-                  opacity: fadeAnim,
-                  transform: [{ translateY: slideAnim }],
-                },
+                styles.contentContainer
               ]}
             >
               <ScrollView 
@@ -306,40 +231,19 @@ const GreenCartScreen = ({ navigation }: any) => {
                 showsVerticalScrollIndicator={false}
               >
                 {cartItems.map((item, index) => (
-                  <Animated.View
-                    key={item.id}
-                    style={{
-                      opacity: fadeAnim,
-                      transform: [
-                        {
-                          translateY: fadeAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [30, 0],
-                          }),
-                        },
-                      ],
-                    }}
-                  >
                     <CartProductCard
+                      key={item.id}
                       product={item}
                       onPress={() => handleProductPress(item)}
                       onRemove={() => handleRemoveItem(item.id)}
                       onUpdateQuantity={(newQuantity: any) => handleUpdateQuantity(item.id, newQuantity)}
                     />
-                  </Animated.View>
                 ))}
               </ScrollView>
-            </Animated.View>
+            </View>
 
             {/* Footer with Total and Checkout Button */}
-            <Animated.View
-              style={[
-                styles.footer,
-                {
-                  transform: [{ translateY: footerSlideAnim }],
-                },
-              ]}
-            >
+
               <LinearGradient
                 colors={['#ffffff', '#fafbff']}
                 style={styles.footerGradient}
@@ -368,7 +272,6 @@ const GreenCartScreen = ({ navigation }: any) => {
                 </View>
 
                 {/* Checkout Button */}
-                <Animated.View style={{ transform: [{ scale: buttonScaleAnim }] }}>
                   <TouchableOpacity
                     style={[
                       styles.checkoutButton,
@@ -395,13 +298,10 @@ const GreenCartScreen = ({ navigation }: any) => {
                       )}
                     </LinearGradient>
                   </TouchableOpacity>
-                </Animated.View>
               </LinearGradient>
-            </Animated.View>
           </>
         )}
       </SafeAreaView>
-    </LinearGradient>
   );
 };
 
@@ -419,8 +319,12 @@ const styles = StyleSheet.create({
   headerGradient: {
     paddingHorizontal: 20,
     paddingVertical: 20,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   headerContent: {
     flexDirection: 'row',
