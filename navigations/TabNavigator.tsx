@@ -94,27 +94,27 @@ const TabNavigator = () => {
         headerShown: false,
       })}
     >
-            <Tab.Screen
-                name="HomeStack"
-                component={HomeStackScreen}
+      <Tab.Screen 
+        name="HomeStack" 
+        component={HomeStackScreen}
         options={{
           tabBarLabel: 'Store', // Etiqueta que aparece debajo del icono
         }}
-            />
-            <Tab.Screen
-                name="CartStack"
-                component={CartStackScreen}
+      />
+      <Tab.Screen 
+        name="CartStack" 
+        component={CartStackScreen}
         options={{
           tabBarLabel: 'Cart',
         }}
-            />
-            <Tab.Screen
-                name="ProfileStack"
-                component={ProfileStackScreen}
+      />
+      <Tab.Screen 
+        name="ProfileStack" 
+        component={ProfileStackScreen}
         options={{
           tabBarLabel: 'Profile',
         }}
-            />
+      />
         </Tab.Navigator>
     );
 };
