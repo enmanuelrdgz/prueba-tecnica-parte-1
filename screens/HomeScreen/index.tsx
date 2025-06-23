@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,22 +8,50 @@ import {
   SafeAreaView,
   Alert,
   ActivityIndicator,
+  Animated,
+  RefreshControl,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import ProductCard from '../../components/ProductCard';
 
 const { width } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }: any) => {
-  
-  // No hay manejo de errores en el caso de que haya
-  // un problema de red o con el servicio remoto
-
-  // Tampoco hay paginacion de la respuesta
-
   const [products, setProducts] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // obtener los productos de la API
+  // Animaciones
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
+  const headerScaleAnim = useRef(new Animated.Value(0.95)).current;
+
+  useEffect(() => {
+    fetchProducts();
+    
+    // Animación inicial
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.spring(headerScaleAnim, {
+        toValue: 1,
+        tension: 50,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  // Obtener los productos de la API
   const fetchProducts = async () => {
     setLoading(true);
     
@@ -32,33 +60,78 @@ const HomeScreen = ({ navigation }: any) => {
       const data = await response.json();
       setProducts(data);
     } catch (err) {
-      Alert.alert('Error', 'No se pudieron cargar los productos');
+      Alert.alert(
+        'Error de Conexión', 
+        'No se pudieron cargar los productos. Por favor, verifica tu conexión a internet.',
+        [
+          {
+            text: 'Reintentar',
+            onPress: () => fetchProducts(),
+          },
+          {
+            text: 'Cancelar',
+            style: 'cancel',
+          },
+        ]
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Cargar productos al montar el componente
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  // Función para refrescar productos
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchProducts();
+    setRefreshing(false);
+  };
 
-  // componente de loading
+  // Componente de loading con estilo verde
   const LoadingContent = () => (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Products</Text>
-        <Text style={styles.headerSubtitle}>
-          Discover our amazing collection
-        </Text>
-      </View>
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-      </View>
-    </SafeAreaView>
+    <LinearGradient
+      colors={['#f0fdf4', '#dcfce7', '#bbf7d0']}
+      style={styles.container}
+    >
+      <SafeAreaView style={styles.container}>
+        <Animated.View
+          style={[
+            styles.header,
+            {
+              opacity: fadeAnim,
+              transform: [{ scale: headerScaleAnim }],
+            },
+          ]}
+        >
+          <LinearGradient
+            colors={['#ffffff', '#fafbff']}
+            style={styles.headerGradient}
+          >
+            <Text style={styles.headerTitle}>Products</Text>
+            <Text style={styles.headerSubtitle}>
+              Discover our amazing collection
+            </Text>
+          </LinearGradient>
+        </Animated.View>
+        
+        <View style={styles.loadingContainer}>
+          <View style={styles.loadingContent}>
+            <LinearGradient
+              colors={['#16a34a', '#22c55e']}
+              style={styles.loadingSpinnerContainer}
+            >
+              <ActivityIndicator size="large" color="#ffffff" />
+            </LinearGradient>
+            <Text style={styles.loadingText}>Cargando productos...</Text>
+            <Text style={styles.loadingSubtext}>
+              Estamos preparando los mejores productos para ti
+            </Text>
+          </View>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 
-  // Calcular el numero de columnas basado en el ancho de la pantalla
+  // Calcular el número de columnas basado en el ancho de la pantalla
   const getColumns = () => {
     const cardWidth = 160;
     const margin = 20;
@@ -72,66 +145,220 @@ const HomeScreen = ({ navigation }: any) => {
   };
 
   // Mostrar loading mientras se cargan los productos
-  if (loading) {
+  if (loading && products.length === 0) {
     return <LoadingContent />;
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Products</Text>
-        <Text style={styles.headerSubtitle}>
-          Discover our amazing collection
-        </Text>
-      </View>
-      
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={[styles.grid, { flexDirection: 'row', flexWrap: 'wrap' }]}>
-          {products.map((product: any) => (
-            <View 
-              key={product.id} 
-              style={[
-                styles.gridItem,
-                { width: `${100 / columns}%` }
-              ]}
-            >
-              <ProductCard
-                product={product}
-                onPress={() => handleProductPress(product)}
-              />
+    <LinearGradient
+      colors={['#f0fdf4', '#dcfce7', '#bbf7d0']}
+      style={styles.container}
+    >
+      <SafeAreaView style={styles.container}>
+        {/* Header */}
+        <Animated.View
+          style={[
+            styles.header,
+            {
+              opacity: fadeAnim,
+              transform: [
+                { scale: headerScaleAnim },
+                { translateY: slideAnim },
+              ],
+            },
+          ]}
+        >
+          <LinearGradient
+            colors={['#ffffff', '#fafbff']}
+            style={styles.headerGradient}
+          >
+            <View style={styles.headerContent}>
+              <View style={styles.headerTextContainer}>
+                <Text style={styles.headerTitle}>Products</Text>
+                <Text style={styles.headerSubtitle}>
+                  Discover our amazing collection
+                </Text>
+              </View>
+              <View style={styles.headerIconContainer}>
+                <LinearGradient
+                  colors={['#16a34a20', '#22c55e10']}
+                  style={styles.headerIcon}
+                >
+                  <Ionicons name="storefront" size={24} color="#16a34a" />
+                </LinearGradient>
+              </View>
             </View>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            
+            {/* Stats Bar */}
+            <View style={styles.statsContainer}>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>{products.length}</Text>
+                <Text style={styles.statLabel}>Productos</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>4.8★</Text>
+                <Text style={styles.statLabel}>Rating</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>24/7</Text>
+                <Text style={styles.statLabel}>Soporte</Text>
+              </View>
+            </View>
+          </LinearGradient>
+        </Animated.View>
+        
+        {/* Products Grid */}
+        <Animated.View
+          style={[
+            styles.contentContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <ScrollView 
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={['#16a34a', '#22c55e']}
+                tintColor="#16a34a"
+                title="Actualizando productos..."
+                titleColor="#16a34a"
+              />
+            }
+          >
+            {products.length > 0 ? (
+              <View style={[styles.grid, { flexDirection: 'row', flexWrap: 'wrap' }]}>
+                {products.map((product: any, index: number) => (
+                  <Animated.View 
+                    key={product.id} 
+                    style={[
+                      styles.gridItem,
+                      { 
+                        width: `${100 / columns}%`,
+                        opacity: fadeAnim,
+                        transform: [
+                          {
+                            translateY: fadeAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [50, 0],
+                            }),
+                          },
+                        ],
+                      }
+                    ]}
+                  >
+                    <ProductCard
+                      product={product}
+                      onPress={() => handleProductPress(product)}
+                    />
+                  </Animated.View>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.emptyContainer}>
+                <LinearGradient
+                  colors={['#ffffff', '#fefbff']}
+                  style={styles.emptyContent}
+                >
+                  <Ionicons name="cube-outline" size={64} color="#9ca3af" />
+                  <Text style={styles.emptyTitle}>No hay productos</Text>
+                  <Text style={styles.emptySubtitle}>
+                    No se encontraron productos disponibles en este momento
+                  </Text>
+                </LinearGradient>
+              </View>
+            )}
+          </ScrollView>
+        </Animated.View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
   },
   header: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  headerGradient: {
     paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    paddingVertical: 20,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  headerTextContainer: {
+    flex: 1,
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#212529',
+    color: '#111827',
     marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#6c757d',
+    color: '#6b7280',
+  },
+  headerIconContainer: {
+    marginLeft: 16,
+  },
+  headerIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#f9fafb',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#16a34a',
+    marginBottom: 2,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#6b7280',
+    fontWeight: '500',
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: '#e5e7eb',
+    marginHorizontal: 8,
+  },
+  contentContainer: {
+    flex: 1,
+    marginTop: 16,
   },
   scrollView: {
     flex: 1,
@@ -141,7 +368,7 @@ const styles = StyleSheet.create({
   },
   grid: {
     paddingHorizontal: 10,
-    paddingTop: 15,
+    paddingTop: 5,
   },
   gridItem: {
     paddingHorizontal: 5,
@@ -152,14 +379,70 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa', // Mismo fondo que el container principal
     paddingHorizontal: 20,
   },
+  loadingContent: {
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 32,
+    shadowColor: '#16a34a',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  loadingSpinnerContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   loadingText: {
-    marginTop: 15,
-    fontSize: 16,
-    color: '#6c757d', // Mismo color que el subtitle
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 8,
     textAlign: 'center',
+  },
+  loadingSubtext: {
+    fontSize: 14,
+    color: '#6b7280',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  // Estilos para estado vacío
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 40,
+  },
+  emptyContent: {
+    alignItems: 'center',
+    borderRadius: 20,
+    padding: 32,
+    shadowColor: '#16a34a',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptySubtitle: {
+    fontSize: 16,
+    color: '#6b7280',
+    textAlign: 'center',
+    lineHeight: 22,
   },
 });
 
