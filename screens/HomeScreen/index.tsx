@@ -3,27 +3,29 @@ import {
   View,
   Text,
   ScrollView,
-  StyleSheet,
   Dimensions,
   SafeAreaView,
   Alert,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import ProductCard from '../../components/ProductCard';
+import { styles } from './styles';
 
 const { width } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }: any) => {
-  
-  // No hay manejo de errores en el caso de que haya
-  // un problema de red o con el servicio remoto
-
-  // Tampoco hay paginacion de la respuesta
-
   const [products, setProducts] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // obtener los productos de la API
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  // Obtener los productos de la API
   const fetchProducts = async () => {
     setLoading(true);
     
@@ -32,33 +34,42 @@ const HomeScreen = ({ navigation }: any) => {
       const data = await response.json();
       setProducts(data);
     } catch (err) {
-      Alert.alert('Error', 'No se pudieron cargar los productos');
+      Alert.alert(
+        'Error de Conexión', 
+        'No se pudieron cargar los productos. Por favor, verifica tu conexión a internet.',
+        [
+          {
+            text: 'Reintentar',
+            onPress: () => fetchProducts(),
+          },
+          {
+            text: 'Cancelar',
+            style: 'cancel',
+          },
+        ]
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Cargar productos al montar el componente
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  // Función para refrescar productos
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchProducts();
+    setRefreshing(false);
+  };
 
-  // componente de loading
+  // Componente de loading
   const LoadingContent = () => (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Products</Text>
-        <Text style={styles.headerSubtitle}>
-          Discover our amazing collection
-        </Text>
-      </View>
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color="#16a34a" />
       </View>
     </SafeAreaView>
   );
 
-  // Calcular el numero de columnas basado en el ancho de la pantalla
+  // Calcular el número de columnas basado en el ancho de la pantalla
   const getColumns = () => {
     const cardWidth = 160;
     const margin = 20;
@@ -72,95 +83,79 @@ const HomeScreen = ({ navigation }: any) => {
   };
 
   // Mostrar loading mientras se cargan los productos
-  if (loading) {
+  if (loading && products.length === 0) {
     return <LoadingContent />;
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Products</Text>
-        <Text style={styles.headerSubtitle}>
-          Discover our amazing collection
-        </Text>
+      {/* Header */}
+      <View style={styles.headerGradient}>
+        <View style={styles.headerContent}>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerTitle}>Productos</Text>
+            <Text style={styles.headerSubtitle}>
+              Discover our amazing collection
+            </Text>
+          </View>
+          <View style={styles.headerIconContainer}>
+            <LinearGradient
+              colors={['#16a34a20', '#22c55e10']}
+              style={styles.headerIcon}
+            >
+              <Ionicons name="storefront" size={24} color="#16a34a" />
+            </LinearGradient>
+          </View>
+        </View>
       </View>
       
+      {/* Products Grid */}
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#16a34a', '#22c55e']}
+            tintColor="#16a34a"
+            title="Actualizando productos..."
+            titleColor="#16a34a"
+          />
+        }
       >
-        <View style={[styles.grid, { flexDirection: 'row', flexWrap: 'wrap' }]}>
-          {products.map((product: any) => (
-            <View 
-              key={product.id} 
-              style={[
-                styles.gridItem,
-                { width: `${100 / columns}%` }
-              ]}
-            >
-              <ProductCard
-                product={product}
-                onPress={() => handleProductPress(product)}
-              />
-            </View>
-          ))}
-        </View>
+        {products.length > 0 ? (
+          <View style={[styles.grid, { flexDirection: 'row', flexWrap: 'wrap' }]}>
+            {products.map((product: any, index: number) => (
+              <View 
+                key={product.id} 
+                style={[
+                  styles.gridItem,
+                  { 
+                    width: `${100 / columns}%`,
+                  }
+                ]}
+              >
+                <ProductCard
+                  product={product}
+                  onPress={() => handleProductPress(product)}
+                />
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="cube-outline" size={64} color="#9ca3af" />
+            <Text style={styles.emptyTitle}>No hay productos</Text>
+            <Text style={styles.emptySubtitle}>
+              No se encontraron productos disponibles en este momento
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#212529',
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#6c757d',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 20,
-  },
-  grid: {
-    paddingHorizontal: 10,
-    paddingTop: 15,
-  },
-  gridItem: {
-    paddingHorizontal: 5,
-    marginBottom: 10,
-  },
-  // Estilos para el loading
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa', // Mismo fondo que el container principal
-    paddingHorizontal: 20,
-  },
-  loadingText: {
-    marginTop: 15,
-    fontSize: 16,
-    color: '#6c757d', // Mismo color que el subtitle
-    textAlign: 'center',
-  },
-});
 
 export default HomeScreen;
