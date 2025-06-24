@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, ReactNode, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 // Crear el contexto
 const AuthContext = createContext();
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
       }
       
     } catch (error) {
-        // sin manejo de problemas de red
+        console.log(error);
     }
   };
 

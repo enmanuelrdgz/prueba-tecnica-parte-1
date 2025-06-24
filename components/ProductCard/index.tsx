@@ -5,10 +5,7 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
 } from 'react-native';
-
-const { width } = Dimensions.get('window');
 
 const ProductCard = ({ product, onPress }: any) => {
   // Format price to show currency symbol and proper formatting

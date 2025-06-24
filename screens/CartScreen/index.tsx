@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
-  Dimensions,
   Animated,
   ActivityIndicator,
 } from 'react-native';
@@ -14,8 +13,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import CartProductCard from '../../components/CartProductCart.tsx';
 import { styles } from './styles';
-
-const { width } = Dimensions.get('window');
 
 // Mock data
 const SAMPLE_CART_ITEMS = [
@@ -87,12 +84,7 @@ const GreenCartScreen = ({ navigation }: any) => {
       )
     );
   };
-
-  // Handle product press to navigate to product detail
-  const handleProductPress = (product: any) => {
-    navigation.navigate('Product', { product });
-  };
-
+  
   // Handle checkout process
   const handleCheckout = () => {
     if (cartItems.length === 0) {

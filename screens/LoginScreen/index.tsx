@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  Dimensions,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
@@ -16,8 +15,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const { width } = Dimensions.get('window');
 
 const GreenLoginScreen = ({ navigation }: any) => {
   const [username, setUsername] = useState('');

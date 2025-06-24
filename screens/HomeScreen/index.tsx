@@ -5,7 +5,6 @@ import {
   ScrollView,
   Dimensions,
   SafeAreaView,
-  Alert,
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
@@ -34,20 +33,7 @@ const HomeScreen = ({ navigation }: any) => {
       const data = await response.json();
       setProducts(data);
     } catch (err) {
-      Alert.alert(
-        'Error de Conexión', 
-        'No se pudieron cargar los productos. Por favor, verifica tu conexión a internet.',
-        [
-          {
-            text: 'Reintentar',
-            onPress: () => fetchProducts(),
-          },
-          {
-            text: 'Cancelar',
-            style: 'cancel',
-          },
-        ]
-      );
+      console.log(err)
     } finally {
       setLoading(false);
     }
