@@ -15,7 +15,7 @@ import { styles } from './styles';
 
 const { width } = Dimensions.get('window');
 
-const HomeScreen = ({ navigation }: any) => {
+const HomeScreen = ({ navigation }) => {
   const [products, setProducts] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -24,7 +24,6 @@ const HomeScreen = ({ navigation }: any) => {
     fetchProducts();
   }, []);
 
-  // Obtener los productos de la API
   const fetchProducts = async () => {
     setLoading(true);
     
@@ -39,7 +38,6 @@ const HomeScreen = ({ navigation }: any) => {
     }
   };
 
-  // Función para refrescar productos
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchProducts();
@@ -64,7 +62,7 @@ const HomeScreen = ({ navigation }: any) => {
   };
   const columns = getColumns();
 
-  const handleProductPress = (product: any) => {
+  const handleProductPress = (product) => {
     navigation.navigate('Product', { product });
   };
 
@@ -116,12 +114,7 @@ const HomeScreen = ({ navigation }: any) => {
             {products.map((product: any, index: number) => (
               <View 
                 key={product.id} 
-                style={[
-                  styles.gridItem,
-                  { 
-                    width: `${100 / columns}%`,
-                  }
-                ]}
+                style={[styles.gridItem, {width: `${100 / columns}%`}]}
               >
                 <ProductCard
                   product={product}
