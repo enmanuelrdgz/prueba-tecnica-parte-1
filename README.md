@@ -1,6 +1,6 @@
 # React Native Expo App
 
-Una aplicación móvil sencilla desarrollada con React Native y Expo como parte de una prueba técnica.
+Una aplicación móvil sencilla desarrollada con React Native y Expo como parte de una prueba técnica para GoPersonal
 
 ## 🎥 Video Demo
 
